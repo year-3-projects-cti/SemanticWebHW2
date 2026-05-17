@@ -1,17 +1,85 @@
-# Exercise 6: SPARQL Queries for Book Recommendation Ontology
-# Execute in Protégé or GraphDB and add screenshots
+# -----------------------------------------------------------------------
+# Query 1: List all books with their title, author, and reading level
+# -----------------------------------------------------------------------
+SELECT ?title ?author ?level
+WHERE {
+  ?book rdf:type book:Book .
+  ?book book:title ?title .
+  OPTIONAL { ?book book:author ?author . }
+  OPTIONAL { ?book book:suitableForLevel ?levelRes .
+             ?levelRes rdfs:label ?level . }
+}
+ORDER BY ?title
 
-# Query 1:
-# TODO
 
-# Query 2:
-# TODO
 
-# Query 3:
-# TODO
 
-# Query 4:
-# TODO
 
-# Query 5:
-# TODO
+# -----------------------------------------------------------------------
+# Query 2: Find all books suitable for Beginner readers
+# -----------------------------------------------------------------------
+SELECT ?title ?author
+WHERE {
+  ?book rdf:type book:Book .
+  ?book book:title ?title .
+  ?book book:author ?author .
+  ?book book:suitableForLevel book:Beginner .
+}
+
+
+
+
+
+# -----------------------------------------------------------------------
+# Query 3: Find all books belonging to the Science Fiction genre
+# -----------------------------------------------------------------------
+SELECT ?title ?author
+WHERE {
+  ?book rdf:type book:Book .
+  ?book book:title ?title .
+  ?book book:author ?author .
+  ?book book:hasGenre book:ScienceFiction .
+}
+
+
+
+
+
+# -----------------------------------------------------------------------
+# Query 4: Find recommended books for each user (genre match)
+# -----------------------------------------------------------------------
+
+SELECT ?userName ?bookTitle ?genre ?bookLevel
+WHERE {
+  ?user  rdf:type book:User .
+  ?user  book:name ?userName .
+  ?user  book:hasPreferredGenre ?preferredGenre .
+
+  ?bookRes rdf:type book:Book .
+  ?bookRes book:title ?bookTitle .
+  ?bookRes book:hasGenre ?preferredGenre .
+  OPTIONAL { ?bookRes book:suitableForLevel ?levelRes .
+             ?levelRes rdfs:label ?bookLevel . }
+
+  ?preferredGenre rdfs:label ?genre .
+}
+ORDER BY ?userName ?bookTitle
+
+
+
+
+
+# -----------------------------------------------------------------------
+# Query 5: List all users with their preferred genre and reading level
+# -----------------------------------------------------------------------
+
+SELECT ?name ?preferredGenre ?readingLevel
+WHERE {
+  ?user rdf:type book:User .
+  ?user book:name ?name .
+  ?user book:hasPreferredGenre ?genreRes .
+  ?user book:hasReadingLevel ?levelRes .
+  ?genreRes rdfs:label ?preferredGenre .
+  ?levelRes rdfs:label ?readingLevel .
+}
+ORDER BY ?name
