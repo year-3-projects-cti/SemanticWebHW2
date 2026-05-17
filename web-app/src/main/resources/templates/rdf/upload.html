@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload RDF - Book Recommendation System</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">Book Recommendation System</a>
+        <div class="d-flex gap-2">
+            <a class="btn btn-outline-light btn-sm" href="/books">Books</a>
+            <a class="btn btn-outline-light btn-sm" href="/books/add">Add Book</a>
+            <a class="btn btn-outline-light btn-sm" href="/rdf/upload">Upload RDF</a>
+        </div>
+    </div>
+</nav>
+<main class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="mb-2">Upload RDF/XML File</h2>
+            <p class="text-muted mb-4">Upload an RDF/XML, Turtle (.ttl), or N-Triples (.nt) file to visualize its graph structure using an interactive network graph.</p>
+
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <form action="/rdf/upload" method="post" enctype="multipart/form-data">
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Select RDF File</label>
+                            <input type="file" class="form-control" name="file"
+                                   accept=".rdf,.xml,.ttl,.nt,.n3" required/>
+                            <div class="form-text">Supported formats: RDF/XML (.rdf, .xml), Turtle (.ttl), N-Triples (.nt)</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Upload &amp; Visualize</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="mt-4 p-3 bg-light rounded">
+                <h6 class="fw-semibold">Test with books.rdf</h6>
+                <p class="small text-muted mb-0">Use the <code>ex1-rdf/books.rdf</code> file from this project to test the visualization. It contains the full book recommendation scenario with users, books, genres, and reading levels.</p>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

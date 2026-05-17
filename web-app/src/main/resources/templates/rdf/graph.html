@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RDF Graph - Book Recommendation System</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <style>
+        #graph-container {
+            width: 100%;
+            height: 620px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            background: #fafafa;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">Book Recommendation System</a>
+        <div class="d-flex gap-2">
+            <a class="btn btn-outline-light btn-sm" href="/books">Books</a>
+            <a class="btn btn-outline-light btn-sm" href="/books/add">Add Book</a>
+            <a class="btn btn-outline-light btn-sm" href="/rdf/upload">Upload RDF</a>
+        </div>
+    </div>
+</nav>
+<main class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-2 px-2">
+        <div>
+            <h2 class="mb-0">RDF Graph Visualization</h2>
+            <small class="text-muted">
+                File: <strong th:text="${filename}"></strong> &mdash;
+                <span th:text="${nodeCount}"></span> nodes,
+                <span th:text="${edgeCount}"></span> edges
+            </small>
+        </div>
+        <a href="/rdf/upload" class="btn btn-outline-secondary btn-sm">Upload Another</a>
+    </div>
+
+    <div class="d-flex gap-3 mb-2 px-2">
+        <span class="badge py-2 px-3" style="background:#4e9af1;">Subject / Resource</span>
+        <span class="badge py-2 px-3" style="background:#57b84c;">Object / Resource</span>
+        <span class="badge py-2 px-3" style="background:#f5a623; color:#000;">Literal value</span>
+    </div>
+
+    <div id="graph-container"></div>
+
+    <script th:inline="javascript">
+        const graphData = /*[[${graphJson}]]*/ {nodes: [], edges: []};
+
+        const nodeColors = {
+            subject: { background: '#4e9af1', border: '#2d6fc0' },
+            object:  { background: '#57b84c', border: '#3a8034' },
+            literal: { background: '#f5a623', border: '#c47d0a' }
+        };
+
+        const nodes = graphData.nodes.map(function(n) {
+            return {
+                id: n.id,
+                label: n.label,
+                color: nodeColors[n.group] || nodeColors.object,
+                font: { size: 13, color: n.group === 'literal' ? '#333' : '#fff' },
+                shape: n.group === 'literal' ? 'box' : 'ellipse',
+                margin: 8
+            };
+        });
+
+        const edges = graphData.edges.map(function(e) {
+            return {
+                from: e.from,
+                to: e.to,
+                label: e.label,
+                arrows: { to: { enabled: true, scaleFactor: 0.7 } },
+                font: { size: 10, align: 'middle', color: '#555' },
+                color: { color: '#aaa', highlight: '#666' },
+                smooth: { type: 'curvedCW', roundness: 0.15 }
+            };
+        });
+
+        const container = document.getElementById('graph-container');
+        const data = {
+            nodes: new vis.DataSet(nodes),
+            edges: new vis.DataSet(edges)
+        };
+        const options = {
+            layout: { improvedLayout: true },
+            physics: {
+                enabled: true,
+                stabilization: { iterations: 200 },
+                barnesHut: { gravitationalConstant: -5000, springLength: 140 }
+            },
+            interaction: { hover: true, navigationButtons: true, keyboard: true }
+        };
+        new vis.Network(container, data, options);
+    </script>
+</main>
+</body>
+</html>
