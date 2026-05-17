@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body>
+<th:block th:fragment="chatWidget(bookTitle)">
+<style>
+  #chat-widget { position:fixed; bottom:24px; right:24px; z-index:9999; font-family:sans-serif; }
+  #chat-toggle { width:52px; height:52px; border-radius:50%; background:#0d6efd; color:#fff; border:none; font-size:22px; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.25); }
+  #chat-window { display:none; flex-direction:column; width:340px; height:480px; background:#fff; border-radius:12px; box-shadow:0 8px 24px rgba(0,0,0,0.18); overflow:hidden; margin-bottom:8px; }
+  #chat-header { background:#0d6efd; color:#fff; padding:12px 16px; display:flex; justify-content:space-between; align-items:center; font-weight:600; }
+  #chat-close { background:none; border:none; color:#fff; font-size:18px; cursor:pointer; line-height:1; }
+  #chat-starters { padding:10px 12px; border-bottom:1px solid #e9ecef; }
+  #chat-starters button { display:block; width:100%; text-align:left; background:#f0f4ff; border:1px solid #d0daff; border-radius:8px; padding:6px 10px; margin-bottom:6px; font-size:13px; cursor:pointer; color:#0d3a8e; }
+  #chat-starters button:hover { background:#dce6ff; }
+  #chat-starters .starters-label { font-size:11px; color:#888; margin-bottom:4px; }
+  #chat-messages { flex:1; overflow-y:auto; padding:10px 12px; display:flex; flex-direction:column; gap:8px; }
+  .chat-msg { max-width:85%; padding:8px 12px; border-radius:10px; font-size:14px; line-height:1.4; word-wrap:break-word; }
+  .chat-msg--user { background:#0d6efd; color:#fff; align-self:flex-end; border-bottom-right-radius:2px; }
+  .chat-msg--assistant { background:#f1f3f5; color:#222; align-self:flex-start; border-bottom-left-radius:2px; }
+  #chat-input-area { display:flex; padding:10px; border-top:1px solid #e9ecef; gap:8px; }
+  #chat-input { flex:1; border:1px solid #ced4da; border-radius:8px; padding:8px 10px; font-size:14px; outline:none; }
+  #chat-send { background:#0d6efd; color:#fff; border:none; border-radius:8px; padding:8px 14px; cursor:pointer; font-size:14px; }
+  #chat-send:hover { background:#0b5ed7; }
+  .chat-typing { font-style:italic; color:#888; font-size:13px; }
+</style>
+
+<div id="chat-widget">
+  <div id="chat-window">
+    <div id="chat-header">
+      <span>Book Assistant</span>
+      <button id="chat-close" title="Close">&#x2715;</button>
+    </div>
+    <div id="chat-starters">
+      <div class="starters-label">Suggested questions</div>
+      <div id="starters-container">
+        <button onclick="sendStarter(this)">What books are available?</button>
+        <button onclick="sendStarter(this)">Which book should I read first?</button>
+        <button onclick="sendStarter(this)">Tell me about the authors.</button>
+      </div>
+    </div>
+    <div id="chat-messages"></div>
+    <div id="chat-input-area">
+      <input type="text" id="chat-input" placeholder="Ask about books..." autocomplete="off"/>
+      <button id="chat-send">Send</button>
+    </div>
+  </div>
+  <button id="chat-toggle" title="Chat with Book Assistant">&#128218;</button>
+</div>
+
+<script th:inline="javascript">
+(function() {
+  const bookTitle = /*[[${bookTitle}]]*/ null;
+  const pageContext = window.location.pathname;
+  let startersLoaded = false;
+
+  document.getElementById('chat-toggle').addEventListener('click', function() {
+    const win = document.getElementById('chat-window');
+    const isOpen = win.style.display === 'flex';
+    win.style.display = isOpen ? 'none' : 'flex';
+    if (!isOpen && !startersLoaded) loadStarters();
+  });
+
+  document.getElementById('chat-close').addEventListener('click', function() {
+    document.getElementById('chat-window').style.display = 'none';
+  });
+
+  document.getElementById('chat-send').addEventListener('click', sendMessage);
+  document.getElementById('chat-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') sendMessage();
+  });
+
+  function loadStarters() {
+    startersLoaded = true;
+    let url = '/api/chat/starters?pageContext=' + encodeURIComponent(pageContext);
+    if (bookTitle) url += '&bookTitle=' + encodeURIComponent(bookTitle);
+    fetch(url).then(r => r.json()).then(starters => {
+      const container = document.getElementById('starters-container');
+      container.innerHTML = '';
+      starters.forEach(function(s) {
+        const btn = document.createElement('button');
+        btn.textContent = s;
+        btn.onclick = function() { sendStarter(btn); };
+        container.appendChild(btn);
+      });
+    }).catch(function() {});
+  }
+
+  window.sendStarter = function(btn) {
+    const text = btn.textContent;
+    document.getElementById('chat-starters').style.display = 'none';
+    sendMessageText(text);
+  };
+
+  function sendMessage() {
+    const input = document.getElementById('chat-input');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    sendMessageText(text);
+  }
+
+  function sendMessageText(text) {
+    appendMsg('user', text);
+    const typing = appendMsg('assistant', '...', 'chat-typing');
+    fetch('/api/chat?context=' + encodeURIComponent(pageContext), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ role: 'user', content: text, pageContext: pageContext })
+    }).then(r => r.json()).then(data => {
+      typing.remove();
+      appendMsg('assistant', data.response || 'No response.');
+    }).catch(function() {
+      typing.remove();
+      appendMsg('assistant', 'Error connecting to chat service.');
+    });
+  }
+
+  function appendMsg(role, content, extraClass) {
+    const msgs = document.getElementById('chat-messages');
+    const div = document.createElement('div');
+    div.className = 'chat-msg chat-msg--' + role + (extraClass ? ' ' + extraClass : '');
+    div.textContent = content;
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+    return div;
+  }
+})();
+</script>
+</th:block>
+</body>
+</html>

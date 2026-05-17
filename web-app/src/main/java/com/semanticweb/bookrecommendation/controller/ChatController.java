@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -26,5 +27,14 @@ public class ChatController {
                                                     @RequestParam(required = false) String context) {
         String response = chatService.processMessage(message.getContent(), context);
         return ResponseEntity.ok(Map.of("response", response));
+    }
+
+    @GetMapping("/api/chat/starters")
+    @ResponseBody
+    public ResponseEntity<List<String>> starters(
+            @RequestParam(required = false) String pageContext,
+            @RequestParam(required = false) String bookTitle) {
+        List<String> starters = chatService.getConversationStarters(pageContext, bookTitle);
+        return ResponseEntity.ok(starters);
     }
 }
