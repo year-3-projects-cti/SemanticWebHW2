@@ -2,6 +2,7 @@ package com.semanticweb.bookrecommendation.controller;
 
 import com.semanticweb.bookrecommendation.model.Book;
 import com.semanticweb.bookrecommendation.service.RdfService;
+import com.semanticweb.bookrecommendation.service.VectorDbService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +17,9 @@ public class BookController {
 
     @Autowired
     private RdfService rdfService;
+
+    @Autowired
+    private VectorDbService vectorDbService;
 
     @GetMapping
     public String listBooks(Model model) {
@@ -35,6 +39,7 @@ public class BookController {
     @PostMapping("/add")
     public String addBook(@ModelAttribute Book book, RedirectAttributes redirectAttributes) {
         rdfService.addBook(book);
+        vectorDbService.rebuildIndex();
         redirectAttributes.addFlashAttribute("success", "Book \"" + book.getTitle() + "\" added successfully.");
         return "redirect:/books";
     }
@@ -63,6 +68,7 @@ public class BookController {
     public String updateBook(@PathVariable String localName, @ModelAttribute Book book,
                              RedirectAttributes redirectAttributes) {
         rdfService.updateBook(localName, book);
+        vectorDbService.rebuildIndex();
         redirectAttributes.addFlashAttribute("success", "Book updated successfully.");
         return "redirect:/books";
     }
