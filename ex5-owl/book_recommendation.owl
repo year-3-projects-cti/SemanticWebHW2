@@ -1,3 +1,196 @@
-<?xml version="1.0"?>
-<Ontology xmlns="http://www.w3.org/2002/07/owl#">
-</Ontology>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE rdf:RDF [
+  <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+  <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+  <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+  <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+  <!ENTITY book "http://example.org/books#" >
+]>
+<rdf:RDF
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:book="http://example.org/books#">
+
+  <!-- ===================== ONTOLOGY DECLARATION ===================== -->
+  <owl:Ontology rdf:about="http://example.org/books">
+    <rdfs:label>Book Recommendation Ontology</rdfs:label>
+    <rdfs:comment>OWL ontology for a book recommendation system based on user preferences and reading levels.</rdfs:comment>
+  </owl:Ontology>
+
+  <!-- ===================== CLASSES ===================== -->
+
+  <owl:Class rdf:about="&book;Book">
+    <rdfs:label>Book</rdfs:label>
+    <rdfs:comment>A book that can be recommended to a user.</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="&book;User">
+    <rdfs:label>User</rdfs:label>
+    <rdfs:comment>A user of the book recommendation system.</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="&book;Genre">
+    <rdfs:label>Genre</rdfs:label>
+    <rdfs:comment>A literary genre or category (e.g. Science Fiction, Mystery).</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="&book;ReadingLevel">
+    <rdfs:label>ReadingLevel</rdfs:label>
+    <rdfs:comment>The reading difficulty level of a book (Beginner, Intermediate, Advanced).</rdfs:comment>
+  </owl:Class>
+
+  <!-- Disjointness: Book and User are disjoint classes -->
+  <owl:AllDisjointClasses>
+    <owl:members rdf:parseType="Collection">
+      <owl:Class rdf:about="&book;Book"/>
+      <owl:Class rdf:about="&book;User"/>
+      <owl:Class rdf:about="&book;Genre"/>
+      <owl:Class rdf:about="&book;ReadingLevel"/>
+    </owl:members>
+  </owl:AllDisjointClasses>
+
+  <!-- ===================== OBJECT PROPERTIES ===================== -->
+
+  <owl:ObjectProperty rdf:about="&book;hasGenre">
+    <rdfs:label>hasGenre</rdfs:label>
+    <rdfs:comment>Associates a book with its genre(s).</rdfs:comment>
+    <rdfs:domain rdf:resource="&book;Book"/>
+    <rdfs:range rdf:resource="&book;Genre"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="&book;suitableForLevel">
+    <rdfs:label>suitableForLevel</rdfs:label>
+    <rdfs:comment>Indicates the reading level a book is suitable for.</rdfs:comment>
+    <rdfs:domain rdf:resource="&book;Book"/>
+    <rdfs:range rdf:resource="&book;ReadingLevel"/>
+    <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="&book;hasReadingLevel">
+    <rdfs:label>hasReadingLevel</rdfs:label>
+    <rdfs:comment>The reading level of a user.</rdfs:comment>
+    <rdfs:domain rdf:resource="&book;User"/>
+    <rdfs:range rdf:resource="&book;ReadingLevel"/>
+    <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="&book;hasPreferredGenre">
+    <rdfs:label>hasPreferredGenre</rdfs:label>
+    <rdfs:comment>The genre preferred by a user.</rdfs:comment>
+    <rdfs:domain rdf:resource="&book;User"/>
+    <rdfs:range rdf:resource="&book;Genre"/>
+  </owl:ObjectProperty>
+
+  <!-- isRecommendedFor: inverse of isRecommendationFor -->
+  <owl:ObjectProperty rdf:about="&book;isRecommendedFor">
+    <rdfs:label>isRecommendedFor</rdfs:label>
+    <rdfs:comment>A book is recommended for a user when it matches their preferred genre and reading level.</rdfs:comment>
+    <rdfs:domain rdf:resource="&book;Book"/>
+    <rdfs:range rdf:resource="&book;User"/>
+    <owl:inverseOf rdf:resource="&book;hasRecommendation"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="&book;hasRecommendation">
+    <rdfs:label>hasRecommendation</rdfs:label>
+    <rdfs:domain rdf:resource="&book;User"/>
+    <rdfs:range rdf:resource="&book;Book"/>
+  </owl:ObjectProperty>
+
+  <!-- ===================== DATA PROPERTIES ===================== -->
+
+  <owl:DatatypeProperty rdf:about="&book;title">
+    <rdfs:label>title</rdfs:label>
+    <rdfs:domain rdf:resource="&book;Book"/>
+    <rdfs:range rdf:resource="&xsd;string"/>
+    <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="&book;author">
+    <rdfs:label>author</rdfs:label>
+    <rdfs:domain rdf:resource="&book;Book"/>
+    <rdfs:range rdf:resource="&xsd;string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="&book;name">
+    <rdfs:label>name</rdfs:label>
+    <rdfs:domain rdf:resource="&book;User"/>
+    <rdfs:range rdf:resource="&xsd;string"/>
+    <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+  </owl:DatatypeProperty>
+
+  <!-- ===================== READING LEVEL INDIVIDUALS ===================== -->
+
+  <book:ReadingLevel rdf:about="&book;Beginner">
+    <rdfs:label>Beginner</rdfs:label>
+  </book:ReadingLevel>
+
+  <book:ReadingLevel rdf:about="&book;Intermediate">
+    <rdfs:label>Intermediate</rdfs:label>
+  </book:ReadingLevel>
+
+  <book:ReadingLevel rdf:about="&book;Advanced">
+    <rdfs:label>Advanced</rdfs:label>
+  </book:ReadingLevel>
+
+  <!-- ===================== GENRE INDIVIDUALS ===================== -->
+
+  <book:Genre rdf:about="&book;ScienceFiction">
+    <rdfs:label>Science Fiction</rdfs:label>
+  </book:Genre>
+
+  <book:Genre rdf:about="&book;Fantasy">
+    <rdfs:label>Fantasy</rdfs:label>
+  </book:Genre>
+
+  <book:Genre rdf:about="&book;Mystery">
+    <rdfs:label>Mystery</rdfs:label>
+  </book:Genre>
+
+  <book:Genre rdf:about="&book;Murder">
+    <rdfs:label>Murder Mystery</rdfs:label>
+  </book:Genre>
+
+  <!-- ===================== USER INDIVIDUALS ===================== -->
+
+  <book:User rdf:about="&book;Alice">
+    <book:name>Alice</book:name>
+    <book:hasReadingLevel rdf:resource="&book;Intermediate"/>
+    <book:hasPreferredGenre rdf:resource="&book;ScienceFiction"/>
+  </book:User>
+
+  <book:User rdf:about="&book;Bob">
+    <book:name>Bob</book:name>
+    <book:hasReadingLevel rdf:resource="&book;Beginner"/>
+    <book:hasPreferredGenre rdf:resource="&book;Mystery"/>
+  </book:User>
+
+  <!-- ===================== BOOK INDIVIDUALS ===================== -->
+
+  <book:Book rdf:about="&book;Dune">
+    <book:title>Dune</book:title>
+    <book:author>Frank Herbert</book:author>
+    <book:hasGenre rdf:resource="&book;ScienceFiction"/>
+    <book:hasGenre rdf:resource="&book;Fantasy"/>
+    <book:suitableForLevel rdf:resource="&book;Advanced"/>
+  </book:Book>
+
+  <book:Book rdf:about="&book;TheSilentPatient">
+    <book:title>The Silent Patient</book:title>
+    <book:author>Alex Michaelides</book:author>
+    <book:hasGenre rdf:resource="&book;Mystery"/>
+    <book:hasGenre rdf:resource="&book;Murder"/>
+    <book:suitableForLevel rdf:resource="&book;Intermediate"/>
+    <book:isRecommendedFor rdf:resource="&book;Bob"/>
+  </book:Book>
+
+  <book:Book rdf:about="&book;HungerGames">
+    <book:title>Hunger Games</book:title>
+    <book:author>Suzanne Collins</book:author>
+    <book:hasGenre rdf:resource="&book;ScienceFiction"/>
+    <book:hasGenre rdf:resource="&book;Fantasy"/>
+    <book:suitableForLevel rdf:resource="&book;Beginner"/>
+  </book:Book>
+
+</rdf:RDF>
