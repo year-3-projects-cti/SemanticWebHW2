@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Form - Book Recommendation System</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">Book Recommendation System</a>
+        <div class="d-flex gap-2">
+            <a class="btn btn-outline-light btn-sm" href="/books">Books</a>
+            <a class="btn btn-outline-light btn-sm" href="/books/add">Add Book</a>
+            <a class="btn btn-outline-light btn-sm" href="/rdf/upload">Upload RDF</a>
+        </div>
+    </div>
+</nav>
+<main class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="mb-4" th:text="${book.uri != null and !book.uri.isEmpty()} ? 'Edit Book' : 'Add Book'"></h2>
+
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <form th:action="${formAction}" method="post" th:object="${book}">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Title <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" th:field="*{title}" required placeholder="e.g. Harry Potter"/>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Author</label>
+                            <input type="text" class="form-control" th:field="*{author}" placeholder="e.g. J.K. Rowling"/>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Genres</label>
+                            <div class="d-flex flex-wrap gap-2">
+                                <div th:each="genre : ${allGenres}" class="form-check">
+                                    <input class="form-check-input" type="checkbox"
+                                           th:field="*{genres}"
+                                           th:value="${genre}"
+                                           th:id="'genre_' + ${genre}"/>
+                                    <label class="form-check-label"
+                                           th:for="'genre_' + ${genre}"
+                                           th:text="${genre}"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Reading Level</label>
+                            <select class="form-select" th:field="*{readingLevel}">
+                                <option value="">-- Select Level --</option>
+                                <option th:each="level : ${allLevels}"
+                                        th:value="${level}"
+                                        th:text="${level}"></option>
+                            </select>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">Save Book</button>
+                            <a href="/books" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>
