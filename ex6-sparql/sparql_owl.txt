@@ -1,0 +1,17 @@
+# Exercise 6: SPARQL Queries for Book Recommendation Ontology
+# Execute in Protégé or GraphDB and add screenshots
+
+# Query 1:
+# TODO
+
+# Query 2:
+# TODO
+
+# Query 3:
+# TODO
+
+# Query 4:
+# TODO
+
+# Query 5:
+# TODO
