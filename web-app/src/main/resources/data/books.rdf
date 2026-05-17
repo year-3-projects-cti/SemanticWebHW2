@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:book="http://example.org/books#">
+
+  <rdf:Description rdf:about="http://example.org/books#ReadingLevel">
+    <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+    <rdfs:label>ReadingLevel</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/books#Genre">
+    <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+    <rdfs:label>Genre</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/books#Book">
+    <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+    <rdfs:label>Book</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/books#User">
+    <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+    <rdfs:label>User</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/books#Beginner">
+    <rdf:type rdf:resource="http://example.org/books#ReadingLevel"/>
+    <rdfs:label>Beginner</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/books#Intermediate">
+    <rdf:type rdf:resource="http://example.org/books#ReadingLevel"/>
+    <rdfs:label>Intermediate</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/books#Advanced">
+    <rdf:type rdf:resource="http://example.org/books#ReadingLevel"/>
+    <rdfs:label>Advanced</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/books#ScienceFiction">
+    <rdf:type rdf:resource="http://example.org/books#Genre"/>
+    <rdfs:label>Science Fiction</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/books#Fantasy">
+    <rdf:type rdf:resource="http://example.org/books#Genre"/>
+    <rdfs:label>Fantasy</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/books#Mystery">
+    <rdf:type rdf:resource="http://example.org/books#Genre"/>
+    <rdfs:label>Mystery</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/books#Murder">
+    <rdf:type rdf:resource="http://example.org/books#Genre"/>
+    <rdfs:label>Murder</rdfs:label>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/books#Alice">
+    <rdf:type rdf:resource="http://example.org/books#User"/>
+    <book:name>Alice</book:name>
+    <book:hasReadingLevel rdf:resource="http://example.org/books#Intermediate"/>
+    <book:hasPreferredGenre rdf:resource="http://example.org/books#ScienceFiction"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/books#Bob">
+    <rdf:type rdf:resource="http://example.org/books#User"/>
+    <book:name>Bob</book:name>
+    <book:hasReadingLevel rdf:resource="http://example.org/books#Beginner"/>
+    <book:hasPreferredGenre rdf:resource="http://example.org/books#Mystery"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/books#Dune">
+    <rdf:type rdf:resource="http://example.org/books#Book"/>
+    <book:title>Dune</book:title>
+    <book:author>Frank Herbert</book:author>
+    <book:hasGenre rdf:resource="http://example.org/books#ScienceFiction"/>
+    <book:hasGenre rdf:resource="http://example.org/books#Fantasy"/>
+    <book:suitableForLevel rdf:resource="http://example.org/books#Advanced"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/books#TheSilentPatient">
+    <rdf:type rdf:resource="http://example.org/books#Book"/>
+    <book:title>The Silent Patient</book:title>
+    <book:author>Alex Michaelides</book:author>
+    <book:hasGenre rdf:resource="http://example.org/books#Mystery"/>
+    <book:hasGenre rdf:resource="http://example.org/books#Murder"/>
+    <book:suitableForLevel rdf:resource="http://example.org/books#Intermediate"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/books#HungerGames">
+    <rdf:type rdf:resource="http://example.org/books#Book"/>
+    <book:title>Hunger Games</book:title>
+    <book:author>Suzanne Collins</book:author>
+    <book:hasGenre rdf:resource="http://example.org/books#ScienceFiction"/>
+    <book:hasGenre rdf:resource="http://example.org/books#Fantasy"/>
+    <book:suitableForLevel rdf:resource="http://example.org/books#Beginner"/>
+  </rdf:Description>
+
+</rdf:RDF>
