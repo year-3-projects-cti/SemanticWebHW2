@@ -1,0 +1,5 @@
+.idea/
+web-app/target/
+web-app/data/
+*.class
+web-app/src/main/resources/application-local.properties

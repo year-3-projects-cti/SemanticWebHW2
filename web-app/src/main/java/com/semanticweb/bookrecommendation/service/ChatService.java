@@ -77,9 +77,6 @@ public class ChatService {
     }
 
     private String callLlm(String systemPrompt, String userMessage) throws Exception {
-        if (llmApiKey == null || llmApiKey.isBlank() || llmApiKey.startsWith("YOUR_")) {
-            return "Chat is not configured. Please set app.llm.api-key in application.properties.";
-        }
         Map<String, Object> body = Map.of(
                 "model", llmModel,
                 "messages", List.of(
@@ -95,6 +92,10 @@ public class ChatService {
                 .build();
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         Map<?, ?> resp = objectMapper.readValue(response.body(), Map.class);
+        if (resp.containsKey("error")) {
+            Map<?, ?> err = (Map<?, ?>) resp.get("error");
+            return "AI service error: " + err.get("message");
+        }
         List<?> choices = (List<?>) resp.get("choices");
         if (choices != null && !choices.isEmpty()) {
             Map<?, ?> msg = (Map<?, ?>) ((Map<?, ?>) choices.get(0)).get("message");
